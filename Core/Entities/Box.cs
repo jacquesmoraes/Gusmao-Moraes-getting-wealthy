@@ -22,7 +22,7 @@ namespace Core.Entities
         public ICollection<BoxContribute> Contribute { get; set; } = [];
 
         public ICollection<BoxWithdraw> Withdraw { get; set; } = [];
-        public ICollection<Expense> Expenses { get; set; } = [];
+        
 
     }
 }

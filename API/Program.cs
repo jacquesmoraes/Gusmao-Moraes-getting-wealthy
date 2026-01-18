@@ -1,5 +1,4 @@
-using Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
+using API.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,8 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 builder.Services.AddControllers ( );
-builder.Services.AddDbContext<FinancialContext> ( options =>
-    options.UseNpgsql ( builder.Configuration.GetConnectionString ( "DefaultConnection" ) ) );
+builder.Services.AddApplicationServices(builder.Configuration);
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi ( );

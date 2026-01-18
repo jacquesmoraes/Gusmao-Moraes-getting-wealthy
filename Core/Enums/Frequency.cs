@@ -4,8 +4,9 @@
     {
         Monthly = 0,
         Weekly = 1,
-        quarterly = 2,
-        semester = 3,
-        Annual = 4
+        Quarterly = 2,
+        Semiannual = 3,
+        Annual = 4,
+        Biweekly = 5
     }
 }

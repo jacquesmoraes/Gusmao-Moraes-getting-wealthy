@@ -9,7 +9,6 @@ namespace Core.Entities
         public decimal Amount { get; set; }
         public DateOnly Date { get; set; }
         public PaymentMethod IncomeMethod { get; set; }
-        public bool IsRecurring { get; set; }
         public bool AlreadyReceived { get; set; }
         public string Notes { get; set; } = string.Empty;
         public DateOnly CreationDate { get; set; }

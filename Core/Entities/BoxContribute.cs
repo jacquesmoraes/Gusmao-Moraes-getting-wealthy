@@ -7,6 +7,7 @@
         public DateOnly Date { get; set; }
         public string ReferenceMonth { get; set; } = string.Empty;
         public string Observation { get; set; } = string.Empty;
+        public DateOnly CreationDate { get; set; }
 
         public long BoxId { get; set; }
         public Box? Box { get; set; }

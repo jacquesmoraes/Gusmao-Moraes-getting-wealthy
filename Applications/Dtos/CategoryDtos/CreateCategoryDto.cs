@@ -1,10 +1,9 @@
 ﻿using Core.Enums;
 
-namespace Core.Entities
+namespace Applications.Dtos.CategoryDtos
 {
-    public class Category
+    public class CreateCategoryDto
     {
-        public long CategoryId { get; set; }
         public required string Name { get; set; }
         public string Icon { get; set; } = string.Empty;
         public string Color { get; set; } = string.Empty;
@@ -12,11 +11,5 @@ namespace Core.Entities
         public string Description { get; set; } = string.Empty;
         public bool IsFavorite { get; set; }
         public bool IsActive { get; set; }
-        public DateOnly CreationDate { get; set; }
-
-        public ICollection<Expense> Expenses { get; set; } = [];
-        public ICollection<Income> Incomes { get; set; } = [];
-
-
     }
 }

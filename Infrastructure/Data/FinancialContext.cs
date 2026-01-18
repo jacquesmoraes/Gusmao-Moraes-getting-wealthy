@@ -21,5 +21,11 @@ namespace Infrastructure.Data
         public DbSet<ReportCategory> ReportItems => Set<ReportCategory> ( );
         public DbSet<WeeklyBudget> WeeklyBudgets => Set<WeeklyBudget> ( );
 
+
+        protected override void OnModelCreating ( ModelBuilder modelBuilder )
+        {
+            base.OnModelCreating ( modelBuilder );
+            modelBuilder.ApplyConfigurationsFromAssembly ( typeof ( FinancialContext ).Assembly );
+        }
     }
 }
