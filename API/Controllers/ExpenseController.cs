@@ -29,6 +29,7 @@ namespace API.Controllers
             }
         }
 
+        [HttpGet]
         public async Task<IActionResult> GetAllExpenses ( [FromQuery] long? categoryId = null, [FromQuery] DateOnly? startDate = null, [FromQuery] DateOnly? endDate = null )
         {
             var list = await _expenseService.GetAllExpenses(categoryId, startDate, endDate);

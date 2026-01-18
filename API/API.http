@@ -1,6 +1,218 @@
-@API_HostAddress = http://localhost:5000
+﻿@baseUrl = https://localhost:5001
+@contentType = application/json
 
-GET {{API_HostAddress}}/category/
+### =========================================================
+### CATEGORY
+### Base: /api/category
+### =========================================================
+
+### Create Category
+POST {{baseUrl}}/api/category
+Content-Type: {{contentType}}
+Accept: {{contentType}}
+
+{
+  "name": "assinaturas",
+  "type": 1,
+  "isActive": true
+}
+
+### Get All Categories
+GET {{baseUrl}}/api/category
+Accept: {{contentType}}
+
+# =========================================================
+# Os endpoints abaixo exigem ID.
+# Use o ID retornado no Create quando quiser testar.
+# =========================================================
+
+# ### Get Category By Id
+ GET {{baseUrl}}/api/category/3
+ Accept: {{contentType}}
+ 
+
+### Update Category
+PUT {{baseUrl}}/api/category/5
+Content-Type: application/json
 Accept: application/json
 
-###
+{
+  "name": "assinaturas",
+  "type": 1,
+  "isActive": true,
+  "description": "para compras recorrentes"
+}
+
+
+### Delete Category
+ DELETE {{baseUrl}}/api/category/2
+# Accept: {{contentType}}
+
+### =========================================================
+### EXPENSE
+### Base: /api/expense
+### =========================================================
+
+### Create Expense
+POST {{baseUrl}}/api/expense
+Content-Type: {{contentType}}
+Accept: {{contentType}}
+
+{
+  "description": "Conta de luz",
+  "amount": 149.90,
+  "date": "2026-01-18",
+  "expensePaymentMethod": 1,
+  "observations": "Pago no debito",
+  "categoryId": 4
+}
+
+### Get All Expenses (optional filters)
+GET {{baseUrl}}/api/expense
+Accept: {{contentType}}
+
+# =========================================================
+# Os endpoints abaixo exigem ID.
+# Use o ID retornado no Create quando quiser testar.
+# =========================================================
+
+### Get Expense By Id
+GET {{baseUrl}}/api/expense/1
+Accept: {{contentType}}
+
+### Update Expense
+PUT {{baseUrl}}/api/expense/1
+Content-Type: {{contentType}}
+Accept: {{contentType}}
+
+{
+  "description": "Conta de luz (ajustada)",
+  "amount": 159.90,
+  "date": "2026-01-20",
+  "expensePaymentMethod": 2,
+  "observations": "Pago no credito",
+  "installmentExpenseId": null,
+  "recurringExpenseId": null,
+  "categoryId": 4
+}
+
+### Delete Expense
+DELETE {{baseUrl}}/api/expense/{id}
+Accept: {{contentType}}
+
+
+
+### =========================================================
+### INSTALLMENT EXPENSE
+### Base: /api/installmentexpense
+### =========================================================
+
+### Create Installment Expense
+POST {{baseUrl}}/api/installmentexpense
+Content-Type: {{contentType}}
+Accept: {{contentType}}
+
+{
+  "numberOfInstallments": 6,
+  "description": "Notebook",
+  "amount": 3000.00,
+  "firstInstallmentDate": "2026-02-05",
+  "expensePaymentMethod": 2,
+  "observations": "Parcelado",
+  "categoryId": 1
+}
+
+### Get All Installment Expenses
+GET {{baseUrl}}/api/installmentexpense
+Accept: {{contentType}}
+
+
+### =========================================================
+### Os endpoints abaixo exigem ID.
+### Use o ID retornado no Create quando quiser testar.
+### =========================================================
+
+### Get Installment Expense By Id
+GET {{baseUrl}}/api/installmentexpense/{id}
+Accept: {{contentType}}
+
+### Update Installment Expense
+PUT {{baseUrl}}/api/installmentexpense/{id}
+Content-Type: {{contentType}}
+Accept: {{contentType}}
+
+{
+  "numberOfInstallments": 8,
+  "description": "Notebook (ajuste)",
+  "amount": 3200.00,
+  "fisrtInstallmentDate": "2026-02-10",
+  "expensePaymentMethod": 2,
+  "observations": "Parcelado ajuste",
+  "categoryId": 1
+}
+
+### Delete Installment Expense
+DELETE {{baseUrl}}/api/installmentexpense/{id}
+Accept: {{contentType}}
+
+### =========================================================
+### RECURRING EXPENSE
+### Base: /api/recurringexpense
+### =========================================================
+
+### Create Recurring Expense
+POST {{baseUrl}}/api/recurringexpense
+Content-Type: {{contentType}}
+Accept: {{contentType}}
+
+{
+  "recurringFrequency": 0,
+  "day": 10,
+  "startDate": "2026-01-01",
+  "endDate": null,
+  "isActive": true,
+  "expensePaymentMethod": 3,
+  "description": "netflix",
+  "amount": 44.90,
+  "categoryId": 5,
+  "oservations": "Debito automatico"
+}
+
+### Get All Recurring Expenses
+GET {{baseUrl}}/api/recurringexpense
+Accept: {{contentType}}
+
+# =========================================================
+# Os endpoints abaixo exigem ID.
+# Use o ID retornado no Create quando quiser testar.
+# =========================================================
+
+# ### Get Recurring Expense By Id
+GET {{baseUrl}}/api/recurringexpense/{id}
+Accept: {{contentType}}
+
+### Update Recurring Expense
+PUT {{baseUrl}}/api/recurringexpense/{id}
+Content-Type: {{contentType}}
+Accept: {{contentType}}
+
+{
+  "recurringFrequency": 0,
+  "day": 15,
+  "startDate": "2026-01-01",
+  "endDate": null,
+  "isActive": true,
+  "expensePaymentMethod": 3,
+  "description": "Internet (ajuste)",
+  "amount": 109.90,
+  "categoryId": 1,
+  "observations": "Debito automatico"
+}
+
+### Toggle Recurring Expense Active
+PATCH {{baseUrl}}/api/recurringexpense/{id}/toggle
+Accept: {{contentType}}
+
+### Delete Recurring Expense
+DELETE {{baseUrl}}/api/recurringexpense/1
+Accept: {{contentType}}

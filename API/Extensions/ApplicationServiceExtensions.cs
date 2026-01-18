@@ -14,7 +14,7 @@ namespace API.Extensions
             services.AddDbContext<FinancialContext> ( options =>
             options.UseNpgsql ( configuration.GetConnectionString ( "DefaultConnection" ) ) );
 
-            
+            services.AddAutoMapper(cfg => {}, typeof(CategoryMapping));
             services.AddScoped<ICategoryRepository, CategoryRepository> ( );
             services.AddScoped<ICategoryService, CategoryService> ( );
             services.AddScoped<IExpenseService, ExpenseService> ( );

@@ -40,10 +40,30 @@ namespace Applications.Services
                 throw new KeyNotFoundException ( "Recurring expense not found." );
             }
 
+            // Guardar valores anteriores para verificar se precisa recalcular NextDate
+            var previousFrequency = existing.RecurringFrequency;
+            var previousDay = existing.Day;
+            var previousStartDate = existing.StartDate;
+            var previousEndDate = existing.EndDate;
+
             ApplyUpdates ( existing, recurringExpense );
-            await PrepareRecurringExpenseAsync ( existing );
+
+            // Recalcular NextDate apenas se frequência, dia ou start date mudaram
+            var shouldRecalculateNextDate =
+        previousFrequency != existing.RecurringFrequency ||
+        previousDay != existing.Day ||
+        previousStartDate != existing.StartDate ||
+        previousEndDate != existing.EndDate;
+
+            await PrepareRecurringExpenseAsync ( existing, shouldRecalculateNextDate );
+
             return await _recurringExpenseRepository.UpdateRecurringExpenseAsync ( existing );
         }
+
+
+
+
+
 
         public async Task<RecurringExpense?> DeleteRecurringExpense ( long id )
         {
@@ -84,7 +104,7 @@ namespace Applications.Services
             existing.Expense.InstallmentExpenseId = null;
         }
 
-        private async Task PrepareRecurringExpenseAsync ( RecurringExpense recurringExpense )
+        private async Task PrepareRecurringExpenseAsync ( RecurringExpense recurringExpense, bool recalculateNextDate = true )
         {
             if ( !Enum.IsDefined ( recurringExpense.RecurringFrequency ) )
             {
@@ -174,11 +194,15 @@ namespace Applications.Services
                 recurringExpense.CreationDate = DateOnly.FromDateTime ( DateTime.UtcNow );
             }
 
-            recurringExpense.NextDate = CalculateNextDate ( recurringExpense.StartDate, recurringExpense.RecurringFrequency, recurringExpense.Day );
-
-            if ( recurringExpense.EndDate.HasValue && recurringExpense.NextDate > recurringExpense.EndDate.Value )
+            // Recalcular NextDate apenas se solicitado
+            if ( recalculateNextDate )
             {
-                throw new ArgumentException ( "NextDate must be on or before EndDate." );
+                recurringExpense.NextDate = CalculateNextDate ( recurringExpense.StartDate, recurringExpense.RecurringFrequency, recurringExpense.Day );
+
+                if ( recurringExpense.EndDate.HasValue && recurringExpense.NextDate > recurringExpense.EndDate.Value )
+                {
+                    throw new ArgumentException ( "NextDate must be on or before EndDate." );
+                }
             }
         }
 
@@ -204,7 +228,7 @@ namespace Applications.Services
             return frequency switch
             {
                 Frequency.Weekly => NextWeeklyDate ( startDate, day ),
-                Frequency.Biweekly => NextWeeklyDate ( startDate, day ),
+                Frequency.Biweekly => NextBiweeklyDate ( startDate, day ),
                 Frequency.Monthly => NextMonthlyDate ( startDate, 1, day ),
                 Frequency.Quarterly => NextMonthlyDate ( startDate, 3, day ),
                 Frequency.Semiannual => NextMonthlyDate ( startDate, 6, day ),
@@ -228,16 +252,20 @@ namespace Applications.Services
             {
                 delta += 7;
             }
+            else if ( delta == 0 )
+            {
+                delta = 7;
+            }
 
             return startDate.AddDays ( delta );
         }
 
+
+
         private static DateOnly NextMonthlyDate ( DateOnly startDate, int monthStep, int day )
         {
-
             var next = startDate.AddMonths ( monthStep );
             var candidate = BuildSafeDate ( next.Year, next.Month, day );
-
 
             if ( candidate <= startDate )
             {
@@ -253,6 +281,35 @@ namespace Applications.Services
             var maxDay = DateTime.DaysInMonth ( year, month );
             var resolvedDay = Math.Min ( day, maxDay );
             return new DateOnly ( year, month, resolvedDay );
+        }
+
+
+        private static DateOnly NextBiweeklyDate ( DateOnly startDate, int day )
+        {
+
+            var nextDate = startDate.AddDays ( 14 );
+
+
+            var targetDow = day % 7;
+            if ( targetDow == 0 )
+            {
+                targetDow = 7;
+            }
+
+            var currentDow = ( int ) nextDate.DayOfWeek;
+            var adjustedDow = currentDow == 0 ? 7 : currentDow;
+
+            if ( adjustedDow != targetDow )
+            {
+                var delta = targetDow - adjustedDow;
+                if ( delta < 0 )
+                {
+                    delta += 7;
+                }
+                nextDate = nextDate.AddDays ( delta );
+            }
+
+            return nextDate;
         }
     }
 }
